@@ -23,17 +23,13 @@
             -webkit-user-select: none;
         }
 
-        /* --- 1: THE ROBOT SHELL OVERLAY --- */
+        /* --- 1: THE ROBOT SHELL OVERLAY (FIXED) --- */
         .robot-shell-overlay {
             position: fixed;
             top: 0; left: 0; 
             width: 100vw; height: 100vh;
-            /* Uses your provided image */
-            background-image: url('ChatGPT Image Sep 8, 2026, 07_24_46 AM.png');
-            background-size: 100% 100%; /* Stretches to fit screen perfectly */
-            background-position: center;
-            background-repeat: no-repeat;
-            pointer-events: none; /* Allows clicks to pass through to the screen */
+            object-fit: fill; /* Stretches the image exactly to the screen borders */
+            pointer-events: none; /* Allows clicks to pass through to the buttons */
             z-index: 9999;
         }
 
@@ -42,13 +38,12 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 450px; /* Size of the background logo */
+            width: 450px; 
             height: auto;
-            /* Adjust this value between 0.1 (faint) and 1.0 (fully opaque/solid) */
             opacity: 0.15; 
             pointer-events: none;
-            z-index: 1; /* Sits behind everything else */
-            filter: grayscale(100%) sepia(100%) hue-rotate(180deg) brightness(150%); /* Tints the logo cyan/blue to match the theme (optional) */
+            z-index: 1;
+            filter: grayscale(100%) sepia(100%) hue-rotate(180deg) brightness(150%);
         }
 
         /* --- SCREEN CONTROLLER --- */
@@ -272,8 +267,8 @@
 </head>
 <body>
 
-    <!-- OVERLAY 1: THE ROBOT SHELL -->
-    <div class="robot-shell-overlay"></div>
+    <!-- OVERLAY 1: THE ROBOT SHELL (Fixed with direct image tag) -->
+    <img src="ChatGPT Image Sep 8, 2026, 07_24_46 AM.png" alt="Robot Frame" class="robot-shell-overlay">
 
     <!-- OVERLAY 2: THE BACKGROUND UTHM LOGO -->
     <img src="image_c8c162_2.png" alt="UTHM Background" class="bg-watermark">
