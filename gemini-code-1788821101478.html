@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Robot Launch Interface</title>
+    <style>
+        /* Base Styling */
+        body {
+            margin: 0;
+            background-color: #050505;
+            color: #0ff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            /* Prevent selecting text on touch */
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+
+        /* Screen Controller */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        /* --- SCREEN 1: Robot Eyes --- */
+        .eyes-container {
+            display: flex;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+        .eye {
+            width: 90px;
+            height: 140px;
+            background: #0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 40px #0ff, inset 0 0 20px #fff;
+            /* Eye blinking animation */
+            animation: blink 4s infinite;
+        }
+        @keyframes blink {
+            0%, 95%, 98%, 100% { transform: scaleY(1); }
+            96%, 99% { transform: scaleY(0.05); }
+        }
+        
+        button {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #0ff;
+            color: #0ff;
+            padding: 20px 40px;
+            font-size: 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: inherit;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transition: all 0.2s ease;
+        }
+        button:active {
+            background: #0ff;
+            color: #000;
+            transform: scale(0.95);
+        }
+
+        /* --- SCREEN 2: Palm Scanner --- */
+        .scan-instruction {
+            font-size: 24px;
+            margin-bottom: 30px;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; text-shadow: 0 0 10px #0ff; }
+        }
+
+        .scan-container {
+            position: relative;
+            width: 320px;
+            height: 400px;
+            border: 2px dashed #333;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+            overflow: hidden;
+        }
+        
+        /* 5 Fingers */
+        .fingers {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .finger {
+            width: 35px;
+            height: 90px;
+            border: 2px solid #222;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        /* Thumb adjustments */
+        .finger:nth-child(1) { height: 70px; margin-top: 40px; transform: rotate(-20deg); }
+        .finger:nth-child(5) { height: 70px; margin-top: 20px; transform: rotate(15deg); }
+
+        /* Palm */
+        .palm {
+            width: 180px;
+            height: 180px;
+            border: 2px solid #222;
+            border-radius: 40%;
+        }
+
+        /* Scanner Laser */
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #0f0;
+            box-shadow: 0 0 20px 5px #0f0;
+            display: none;
+        }
+
+        /* Scanning Active Animations */
+        .scanning .scanner-line {
+            display: block;
+            animation: sweep 2s linear infinite;
+        }
+        .scanning .finger:nth-child(1) { animation: scanGlow 0.4s forwards 0.5s; }
+        .scanning .finger:nth-child(2) { animation: scanGlow 0.4s forwards 1.0s; }
+        .scanning .finger:nth-child(3) { animation: scanGlow 0.4s forwards 1.5s; }
+        .scanning .finger:nth-child(4) { animation: scanGlow 0.4s forwards 2.0s; }
+        .scanning .finger:nth-child(5) { animation: scanGlow 0.4s forwards 2.5s; }
+        .scanning .palm { animation: scanGlow 0.4s forwards 3.0s; }
+
+        @keyframes sweep {
+            0% { top: -10px; }
+            50% { top: 100%; }
+            100% { top: -10px; }
+        }
+        @keyframes scanGlow {
+            to { 
+                border-color: #0f0; 
+                background: rgba(0, 255, 0, 0.2); 
+                box-shadow: 0 0 15px #0f0; 
+            }
+        }
+
+        /* --- SCREEN 3: Success & Countdown --- */
+        .status-accepted {
+            font-size: 60px;
+            color: #0f0;
+            margin: 0;
+            text-shadow: 0 0 20px #0f0;
+            letter-spacing: 5px;
+        }
+        .welcome-msg {
+            font-size: 32px;
+            color: #fff;
+            margin: 20px 0 40px 0;
+            max-width: 80%;
+        }
+        .highlight {
+            color: #0ff;
+            font-weight: bold;
+        }
+        .countdown-circle {
+            width: 150px;
+            height: 150px;
+            border: 5px solid #0ff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            font-weight: bold;
+            color: #0ff;
+            box-shadow: 0 0 30px #0ff, inset 0 0 30px #0ff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 1: ROBOT EYES -->
+    <div id="screen-eyes" class="screen active">
+        <div class="eyes-container">
+            <div class="eye"></div>
+            <div class="eye"></div>
+        </div>
+        <button onclick="startScanning()">Initiate Palm Scan</button>
+    </div>
+
+    <!-- SCREEN 2: SCANNER -->
+    <div id="screen-scan" class="screen">
+        <div class="scan-instruction">PLEASE PLACE HAND ON SCREEN</div>
+        <!-- Trigger scan by tapping the container -->
+        <div class="scan-container" id="scan-pad" onclick="triggerScanAnimation()">
+            <div class="scanner-line"></div>
+            <div class="fingers">
+                <div class="finger"></div>
+                <div class="finger"></div>
+                <div class="finger"></div>
+                <div class="finger"></div>
+                <div class="finger"></div>
+            </div>
+            <div class="palm"></div>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: SUCCESS & COUNTDOWN -->
+    <div id="screen-success" class="screen">
+        <h1 class="status-accepted">ACCEPTED</h1>
+        <div class="welcome-msg">
+            Welcome <span class="highlight" id="guest-name-display">Guest</span> 
+            to <br><span class="highlight" id="event-name-display">The Event</span>!
+        </div>
+        <div class="countdown-circle" id="countdown-timer">5</div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        // Change these variables to suit your event!
+        const guestName = "VIP GUEST";
+        const eventName = "THE GRAND LAUNCH 2026";
+        
+        // --- LOGIC ---
+        const screenEyes = document.getElementById('screen-eyes');
+        const screenScan = document.getElementById('screen-scan');
+        const screenSuccess = document.getElementById('screen-success');
+        const scanPad = document.getElementById('scan-pad');
+        const timerDisplay = document.getElementById('countdown-timer');
+
+        // Insert config variables into the HTML
+        document.getElementById('guest-name-display').innerText = guestName;
+        document.getElementById('event-name-display').innerText = eventName;
+
+        // Step 1: Move from Eyes to Scan Screen
+        function startScanning() {
+            screenEyes.classList.remove('active');
+            screenScan.classList.add('active');
+            
+            // Reset scan pad state in case it's a loop
+            scanPad.classList.remove('scanning');
+            document.querySelector('.scan-instruction').innerText = "PLEASE PLACE HAND ON SCREEN";
+        }
+
+        // Step 2: User touches the scan pad
+        function triggerScanAnimation() {
+            // Prevent double taps
+            if(scanPad.classList.contains('scanning')) return; 
+
+            document.querySelector('.scan-instruction').innerText = "ANALYZING BIOMETRICS...";
+            scanPad.classList.add('scanning');
+
+            // Wait 4 seconds for the CSS animation (5 fingers + palm) to finish
+            setTimeout(() => {
+                showSuccessScreen();
+            }, 4000);
+        }
+
+        // Step 3: Show Success and start countdown
+        function showSuccessScreen() {
+            screenScan.classList.remove('active');
+            screenSuccess.classList.add('active');
+
+            let count = 5;
+            timerDisplay.innerText = count;
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    timerDisplay.innerText = count;
+                } else {
+                    clearInterval(countdownInterval);
+                    resetToStart();
+                }
+            }, 1000);
+        }
+
+        // Step 4: Reset back to idle eyes
+        function resetToStart() {
+            screenSuccess.classList.remove('active');
+            screenEyes.classList.add('active');
+        }
+    </script>
+</body>
+</html>
