@@ -11,7 +11,7 @@
         /* Base Styling */
         body {
             margin: 0;
-            background-color: #010408; /* Deep glass color */
+            background-color: #010408; 
             color: #0f0;
             font-family: 'Orbitron', sans-serif;
             display: flex;
@@ -23,13 +23,13 @@
             -webkit-user-select: none;
         }
 
-        /* --- 1: THE ROBOT SHELL OVERLAY (FIXED) --- */
+        /* --- 1: THE ROBOT SHELL OVERLAY --- */
         .robot-shell-overlay {
             position: fixed;
             top: 0; left: 0; 
             width: 100vw; height: 100vh;
-            object-fit: fill; /* Stretches the image exactly to the screen borders */
-            pointer-events: none; /* Allows clicks to pass through to the buttons */
+            object-fit: fill; 
+            pointer-events: none; 
             z-index: 9999;
         }
 
@@ -267,8 +267,8 @@
 </head>
 <body>
 
-    <!-- OVERLAY 1: THE ROBOT SHELL (Fixed with direct image tag) -->
-    <img src="ChatGPT Image Sep 8, 2026, 07_24_46 AM.png" alt="Robot Frame" class="robot-shell-overlay">
+    <!-- OVERLAY 1: THE ROBOT SHELL (Looking for 'shell.png' in the same folder) -->
+    <img src="shell.png" alt="Robot Frame" class="robot-shell-overlay">
 
     <!-- OVERLAY 2: THE BACKGROUND UTHM LOGO -->
     <img src="image_c8c162_2.png" alt="UTHM Background" class="bg-watermark">
