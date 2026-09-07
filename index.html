@@ -11,7 +11,7 @@
         /* Base Styling */
         body {
             margin: 0;
-            background-color: #010408; 
+            background-color: #010408; /* Deep glass color */
             color: #0f0;
             font-family: 'Orbitron', sans-serif;
             display: flex;
@@ -31,6 +31,10 @@
             object-fit: fill; 
             pointer-events: none; 
             z-index: 9999;
+            
+            /* THIS IS THE MAGIC FIX */
+            /* It turns the solid black center of your image transparent! */
+            mix-blend-mode: screen; 
         }
 
         /* --- 2: UTHM LOGO FACE BACKGROUND --- */
@@ -267,7 +271,7 @@
 </head>
 <body>
 
-    <!-- OVERLAY 1: THE ROBOT SHELL (Looking for 'shell.png' in the same folder) -->
+    <!-- OVERLAY 1: THE ROBOT SHELL -->
     <img src="shell.png" alt="Robot Frame" class="robot-shell-overlay">
 
     <!-- OVERLAY 2: THE BACKGROUND UTHM LOGO -->
