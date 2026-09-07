@@ -177,4 +177,203 @@
         .scanning .finger:nth-child(1) { animation: scanGlow 0.4s forwards 0.5s; }
         .scanning .finger:nth-child(2) { animation: scanGlow 0.4s forwards 0.8s; }
         .scanning .finger:nth-child(3) { animation: scanGlow 0.4s forwards 1.1s; }
-        .scanning .
+        .scanning .finger:nth-child(4) { animation: scanGlow 0.4s forwards 1.4s; }
+        .scanning .finger:nth-child(5) { animation: scanGlow 0.4s forwards 1.7s; }
+        .scanning .palm { animation: scanGlow 0.5s forwards 2.0s; }
+
+        @keyframes sweep {
+            0% { top: -10px; }
+            50% { top: 100%; }
+            100% { top: -10px; }
+        }
+        @keyframes scanGlow {
+            to { 
+                border-color: #0f0; 
+                background: rgba(0, 255, 0, 0.2); 
+                box-shadow: 0 0 20px #0f0; 
+            }
+        }
+
+        /* --- SCREEN 3: Success & Welcome --- */
+        .status-accepted {
+            font-size: 70px;
+            color: #0f0;
+            margin: 0;
+            text-shadow: 0 0 30px #0f0;
+            letter-spacing: 8px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .welcome-msg {
+            font-size: 38px;
+            color: #fff;
+            margin: 30px 0 0 0;
+            line-height: 1.5;
+            animation: fadeIn 1s forwards 0.5s;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        .highlight {
+            color: #0f0;
+            font-weight: bold;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        /* --- SCREEN 4: Fullscreen Countdown Animation --- */
+        #screen-countdown {
+            background-color: #050505;
+            z-index: 50;
+        }
+        .countdown-number {
+            font-size: 50vw; /* Scales massively to screen size */
+            font-weight: 900;
+            color: #0f0;
+            margin: 0;
+            line-height: 1;
+            /* Zoom and fade animation per second */
+            animation: explode 1s infinite; 
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0.3); opacity: 0; text-shadow: 0 0 0px #0f0; }
+            30% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 80px #0f0; }
+            100% { transform: scale(1.5); opacity: 0; text-shadow: 0 0 150px #0f0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="screen-eyes" class="screen active">
+        <div class="eyes-container">
+            <div class="eye"></div>
+            <div class="eye"></div>
+        </div>
+        <button onclick="startScanning()">Initiate Scan</button>
+    </div>
+
+    <div id="screen-scan" class="screen">
+        <div class="scan-instruction">PLACE HAND ON SENSOR</div>
+        
+        <div class="scan-container" id="scan-pad" onclick="triggerScanAnimation()">
+            <div class="scanner-line"></div>
+            <div class="hand-outline">
+                <div class="fingers">
+                    <div class="finger"></div>
+                    <div class="finger"></div>
+                    <div class="finger"></div>
+                    <div class="finger"></div>
+                    <div class="finger"></div>
+                </div>
+                <div class="palm"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-success" class="screen">
+        <h1 class="status-accepted">ACCEPTED</h1>
+        <div class="welcome-msg">
+            Welcome <span class="highlight" id="guest-name-display">Guest</span><br>
+            to <span class="highlight" id="event-name-display">The Event</span>
+        </div>
+    </div>
+
+    <div id="screen-countdown" class="screen">
+        <div class="countdown-number" id="countdown-display">5</div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const guestName = "VIP GUEST";
+        const eventName = "THE GRAND LAUNCH";
+        
+        // --- DOM Elements ---
+        const screenEyes = document.getElementById('screen-eyes');
+        const screenScan = document.getElementById('screen-scan');
+        const screenSuccess = document.getElementById('screen-success');
+        const screenCountdown = document.getElementById('screen-countdown');
+        const scanPad = document.getElementById('scan-pad');
+        const countdownDisplay = document.getElementById('countdown-display');
+
+        // Apply config
+        document.getElementById('guest-name-display').innerText = guestName;
+        document.getElementById('event-name-display').innerText = eventName;
+
+        // Step 1: Eyes -> Scanner
+        function startScanning() {
+            screenEyes.classList.remove('active');
+            screenScan.classList.add('active');
+            
+            // Reset states
+            scanPad.classList.remove('scanning');
+            document.querySelector('.scan-instruction').innerText = "PLACE HAND ON SENSOR";
+            
+            // Remove previous inline styles added by keyframes (reset visual state)
+            const handParts = document.querySelectorAll('.finger, .palm');
+            handParts.forEach(part => {
+                part.style.animation = 'none';
+                part.offsetHeight; /* Trigger reflow to restart animation later */
+                part.style.animation = null; 
+            });
+        }
+
+        // Step 2: Touch Pad -> Animate Scan
+        function triggerScanAnimation() {
+            if(scanPad.classList.contains('scanning')) return; 
+
+            document.querySelector('.scan-instruction').innerText = "ANALYZING BIOMETRICS...";
+            scanPad.classList.add('scanning');
+
+            // Wait 3.5 seconds for scan sweep and finger glow to finish
+            setTimeout(() => {
+                showSuccessScreen();
+            }, 3500);
+        }
+
+        // Step 3: Show "Accepted" for a moment
+        function showSuccessScreen() {
+            screenScan.classList.remove('active');
+            screenSuccess.classList.add('active');
+
+            // Hold on the success message for 3 seconds, then start countdown
+            setTimeout(() => {
+                startFullscreenCountdown();
+            }, 3000);
+        }
+
+        // Step 4: Big Fullscreen Countdown
+        function startFullscreenCountdown() {
+            screenSuccess.classList.remove('active');
+            screenCountdown.classList.add('active');
+
+            let count = 5;
+            countdownDisplay.innerText = count;
+
+            // Sync the number change with the 1s CSS explosion animation
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    // Slight delay to update the text right as the number scales down to invisible
+                    setTimeout(() => {
+                        countdownDisplay.innerText = count;
+                    }, 50); 
+                } else {
+                    clearInterval(countdownInterval);
+                    resetToStart();
+                }
+            }, 1000); // exactly 1 second intervals matching the CSS animation
+        }
+
+        // Step 5: Back to eyes
+        function resetToStart() {
+            screenCountdown.classList.remove('active');
+            screenEyes.classList.add('active');
+        }
+    </script>
+</body>
+</html>
