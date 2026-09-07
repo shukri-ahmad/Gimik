@@ -32,21 +32,18 @@
             z-index: 9998;
             box-sizing: border-box;
             
-            /* Realistic 3D border lighting */
             border: 60px solid #d0d5dc;
-            border-top-color: #f8fbff;    /* Light hitting from top */
-            border-bottom-color: #8b95a1; /* Shadow on bottom */
+            border-top-color: #f8fbff;    
+            border-bottom-color: #8b95a1; 
             border-left-color: #b9c1c9;
             border-right-color: #b9c1c9;
             border-radius: 90px;
             
-            /* Inner shadows to simulate screen depth and glass reflection */
             box-shadow: 
                 inset 0 0 80px rgba(0,0,0,0.9), 
                 inset 0 0 20px rgba(255,255,255,0.1);
         }
 
-        /* Adds a specular highlight curve to the inner rim */
         .robot-head-overlay::before {
             content: '';
             position: absolute;
@@ -58,7 +55,6 @@
             pointer-events: none;
         }
 
-        /* 3D Forehead Notch */
         .forehead-notch {
             position: absolute;
             top: -60px; 
@@ -66,7 +62,6 @@
             transform: translateX(-50%);
             width: 220px;
             height: 120px;
-            /* Metallic gradient */
             background: linear-gradient(135deg, #f8fbff 0%, #b9c1c9 100%);
             border-radius: 0 0 70px 70px;
             display: flex;
@@ -74,7 +69,6 @@
             align-items: center;
             padding-bottom: 15px;
             
-            /* Beveled edges and drop shadow onto the glass */
             border-bottom: 5px solid #6b7581;
             border-left: 2px solid #e2e8f0;
             border-right: 2px solid #9aa4b0;
@@ -83,24 +77,11 @@
                 inset 0 -5px 10px rgba(0,0,0,0.2);
         }
         
-        /* Realistic UTHM Logo placement */
         .uthm-logo {
-            width: 75px;
+            width: 85px; /* Slightly enlarged for better visibility */
             height: auto;
-            /* 3D drop shadow for the logo itself */
-            filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.5));
-        }
-
-        /* --- OPTION 2: CUSTOM IMAGE OVERLAY SUPPORT --- */
-        /* If you use a transparent PNG, it will sit on top of everything here */
-        .custom-image-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            object-fit: cover; /* Stretches to fit the iPad perfectly */
-            pointer-events: none;
-            z-index: 9999;
-            display: none; /* Change this to 'block' if you use your own image */
+            /* CSS Magic: This makes the white background of the image transparent! */
+            mix-blend-mode: multiply;
         }
 
         /* --- SCREEN CONTROLLER --- */
@@ -200,6 +181,9 @@
             background-image: 
                 linear-gradient(to right, rgba(0, 255, 0, 0.05) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            
+            /* Pushes the scanner content down to avoid the forehead notch */
+            padding-top: 140px; 
         }
 
         .scan-instruction {
@@ -323,23 +307,13 @@
 </head>
 <body>
 
-    <!-- ==========================================
-         OVERLAY OPTION 1: CSS 3D ROBOT HEAD 
-         (You are currently using this one)
-    =========================================== -->
+    <!-- ROBOT HEAD OVERLAY -->
     <div class="robot-head-overlay">
         <div class="forehead-notch">
             <!-- References the UTHM Logo -->
             <img src="image_c8c162.png" alt="UTHM Logo" class="uthm-logo">
         </div>
     </div>
-
-    <!-- ==========================================
-         OVERLAY OPTION 2: CUSTOM PICTURE OVERLAY
-         (Uncomment the image tag below and change display: none to block in CSS to use this)
-    =========================================== -->
-    <!-- <img src="your-3d-robot-render.png" class="custom-image-overlay" alt="Robot Frame"> -->
-
 
     <!-- SCREEN 1: CYAN TURBINE EYES -->
     <div id="screen-eyes" class="screen active">
