@@ -29,7 +29,7 @@
             top: 50%; left: 50%; 
             width: 100vw; height: 100vh;
             
-            /* Zoomed to 1.3 as requested */
+            /* Zoomed to 1.3 */
             transform: translate(-50%, -50%) scale(1.3);
             
             object-fit: fill; 
@@ -48,7 +48,6 @@
             opacity: 0.15; 
             pointer-events: none;
             z-index: 1;
-            /* Filter to keep it green/cyan */
             filter: grayscale(100%) sepia(100%) hue-rotate(90deg) brightness(150%);
         }
 
@@ -72,15 +71,14 @@
         .eyes-container {
             display: flex;
             gap: 160px; 
-            /* Pushes the button lower */
-            margin-bottom: 120px; 
+            margin-bottom: 120px; /* Pushes the button lower */
         }
         
         .eye {
             width: 260px; 
             height: 260px; 
             border-radius: 50%;
-            background-color: #001100; /* Dark green base */
+            background-color: #001100;
             box-shadow: 0 0 70px #0f0, inset 0 0 60px #000;
             position: relative;
             display: flex;
@@ -94,7 +92,6 @@
             position: absolute;
             width: 85%; height: 85%;
             border-radius: 50%;
-            /* Green turbine blades */
             background: repeating-conic-gradient(from 0deg, #0f0 0deg 5deg, #004400 6deg 10deg);
             -webkit-mask-image: radial-gradient(circle, transparent 25%, black 26%, black 90%, transparent 100%);
             animation: spin 20s linear infinite; 
@@ -105,7 +102,6 @@
             position: absolute;
             width: 35%; height: 35%;
             border-radius: 50%;
-            /* Bright green glowing pupil */
             background: radial-gradient(circle, #fff 0%, #0f0 40%, transparent 70%);
             box-shadow: 0 0 35px #fff;
         }
@@ -125,7 +121,6 @@
             100% { transform: translate(0, 0) scale(1); }
         }
         
-        /* Matching Green Button */
         #initiate-btn {
             background: rgba(0, 255, 0, 0.1);
             border: 2px solid #0f0;
@@ -141,7 +136,7 @@
             box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
             transition: all 0.2s ease;
             z-index: 10;
-            margin-top: 40px; /* Added extra top margin to push it down further */
+            margin-top: 40px;
         }
         #initiate-btn:active {
             background: #0f0;
@@ -264,16 +259,88 @@
         @keyframes fadeIn { to { opacity: 1; } }
         .highlight { color: #0f0; font-weight: 900; text-shadow: 0 0 20px #0f0; }
 
-        /* --- SCREEN 4: Fullscreen Countdown --- */
+        /* --- SCREEN 4: SCI-FI HUD COUNTDOWN --- */
+        .countdown-wrapper {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: scale(1.6); /* Scale up to dominate the screen */
+            z-index: 20;
+        }
+
         .countdown-number {
-            font-size: 45vw; font-weight: 900; color: #fff; margin: 0; line-height: 1;
-            animation: explode 1s infinite; 
+            font-size: 160px; 
+            font-weight: 900; 
+            color: #fff; 
+            margin: 0; 
+            line-height: 1;
+            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 80px #0f0;
+            z-index: 5;
+            /* Syncs precisely with the 1-second JavaScript interval */
+            animation: digital-pop 1s infinite; 
         }
-        @keyframes explode {
-            0% { transform: scale(0.3); opacity: 0; text-shadow: 0 0 0px #0f0; }
-            30% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 80px #0f0, 0 0 120px #0f0; color: #0f0; }
-            100% { transform: scale(1.5); opacity: 0; text-shadow: 0 0 150px #0f0; }
+
+        /* Sharp glitchy pop effect matching stock video style */
+        @keyframes digital-pop {
+            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
+            10% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
+            25% { transform: scale(1); opacity: 1; }
+            85% { transform: scale(1); opacity: 1; filter: blur(0px); }
+            100% { transform: scale(1.5); opacity: 0; filter: blur(10px); }
         }
+
+        /* Rotating HUD Rings */
+        .ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+
+        /* Outer dashed ring */
+        .ring-1 {
+            width: 100%; height: 100%;
+            border: 4px dashed rgba(0, 255, 0, 0.7);
+            animation: spin 6s linear infinite;
+        }
+
+        /* Glowing thick inner ring with gaps */
+        .ring-2 {
+            width: 85%; height: 85%;
+            border-top: 6px solid #0f0;
+            border-bottom: 6px solid #0f0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            animation: spin-reverse 3s linear infinite;
+            box-shadow: 0 0 15px #0f0, inset 0 0 15px #0f0;
+        }
+
+        /* Inner dotted track */
+        .ring-3 {
+            width: 70%; height: 70%;
+            border: 3px dotted #fff;
+            animation: spin 4s linear infinite;
+        }
+
+        /* Digital crosshairs */
+        .crosshair-h {
+            position: absolute;
+            width: 140%; height: 2px;
+            background: linear-gradient(to right, transparent, rgba(0,255,0,0.6), transparent);
+            z-index: 1;
+        }
+        .crosshair-v {
+            position: absolute;
+            height: 140%; width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(0,255,0,0.6), transparent);
+            z-index: 1;
+        }
+
+        @keyframes spin-reverse { 100% { transform: translate(-50%, -50%) rotate(-360deg); } }
 
         /* --- SCREEN 5: Blank --- */
         #screen-blank { background-color: #000; }
@@ -334,9 +401,16 @@
         </div>
     </div>
 
-    <!-- SCREEN 4: COUNTDOWN -->
+    <!-- SCREEN 4: SCI-FI HUD COUNTDOWN -->
     <div id="screen-countdown" class="screen">
-        <div class="countdown-number" id="countdown-display">5</div>
+        <div class="countdown-wrapper">
+            <div class="crosshair-h"></div>
+            <div class="crosshair-v"></div>
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+            <div class="countdown-number" id="countdown-display">5</div>
+        </div>
     </div>
 
     <!-- SCREEN 5: BLANK WAIT SCREEN -->
@@ -403,10 +477,11 @@
             let count = 5;
             countdownDisplay.innerText = count;
 
+            // Sync JS exact seconds with CSS 1-second animation loop
             const countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    setTimeout(() => { countdownDisplay.innerText = count; }, 50); 
+                    countdownDisplay.innerText = count;
                 } else {
                     clearInterval(countdownInterval);
                     showBlankScreen();
