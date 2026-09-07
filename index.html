@@ -23,65 +23,32 @@
             -webkit-user-select: none;
         }
 
-        /* --- OPTION 1: ADVANCED CSS 3D SHELL --- */
-        .robot-head-overlay {
+        /* --- 1: THE ROBOT SHELL OVERLAY --- */
+        .robot-shell-overlay {
             position: fixed;
             top: 0; left: 0; 
             width: 100vw; height: 100vh;
-            pointer-events: none; 
-            z-index: 9998;
-            box-sizing: border-box;
-            
-            border: 60px solid #d0d5dc;
-            border-top-color: #f8fbff;    
-            border-bottom-color: #8b95a1; 
-            border-left-color: #b9c1c9;
-            border-right-color: #b9c1c9;
-            border-radius: 90px;
-            
-            box-shadow: 
-                inset 0 0 80px rgba(0,0,0,0.9), 
-                inset 0 0 20px rgba(255,255,255,0.1);
+            /* Uses your provided image */
+            background-image: url('ChatGPT Image Sep 8, 2026, 07_24_46 AM.png');
+            background-size: 100% 100%; /* Stretches to fit screen perfectly */
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none; /* Allows clicks to pass through to the screen */
+            z-index: 9999;
         }
 
-        .robot-head-overlay::before {
-            content: '';
-            position: absolute;
-            top: -60px; left: -60px; right: -60px; bottom: -60px;
-            border-radius: 90px;
-            box-shadow: 
-                inset 0 15px 15px rgba(255,255,255,0.9),
-                inset 0 -15px 25px rgba(0,0,0,0.4);
-            pointer-events: none;
-        }
-
-        .forehead-notch {
-            position: absolute;
-            top: -60px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 220px;
-            height: 120px;
-            background: linear-gradient(135deg, #f8fbff 0%, #b9c1c9 100%);
-            border-radius: 0 0 70px 70px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 15px;
-            
-            border-bottom: 5px solid #6b7581;
-            border-left: 2px solid #e2e8f0;
-            border-right: 2px solid #9aa4b0;
-            box-shadow: 
-                0 25px 50px rgba(0,0,0,0.8),
-                inset 0 -5px 10px rgba(0,0,0,0.2);
-        }
-        
-        .uthm-logo {
-            width: 85px; /* Slightly enlarged for better visibility */
+        /* --- 2: UTHM LOGO FACE BACKGROUND --- */
+        .bg-watermark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px; /* Size of the background logo */
             height: auto;
-            /* CSS Magic: This makes the white background of the image transparent! */
-            mix-blend-mode: multiply;
+            /* Adjust this value between 0.1 (faint) and 1.0 (fully opaque/solid) */
+            opacity: 0.15; 
+            pointer-events: none;
+            z-index: 1; /* Sits behind everything else */
+            filter: grayscale(100%) sepia(100%) hue-rotate(180deg) brightness(150%); /* Tints the logo cyan/blue to match the theme (optional) */
         }
 
         /* --- SCREEN CONTROLLER --- */
@@ -96,19 +63,20 @@
             top: 0; left: 0;
             padding: 80px; 
             box-sizing: border-box;
+            z-index: 10;
         }
         .screen.active { display: flex; }
 
         /* --- SCREEN 1: CYAN TURBINE EYES --- */
         .eyes-container {
             display: flex;
-            gap: 90px;
+            gap: 120px;
             margin-bottom: 50px;
         }
         
         .eye {
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             background-color: #001133;
             box-shadow: 0 0 60px #0088ff, inset 0 0 50px #000;
@@ -181,9 +149,6 @@
             background-image: 
                 linear-gradient(to right, rgba(0, 255, 0, 0.05) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
-            
-            /* Pushes the scanner content down to avoid the forehead notch */
-            padding-top: 140px; 
         }
 
         .scan-instruction {
@@ -307,13 +272,11 @@
 </head>
 <body>
 
-    <!-- ROBOT HEAD OVERLAY -->
-    <div class="robot-head-overlay">
-        <div class="forehead-notch">
-            <!-- References the UTHM Logo -->
-            <img src="image_c8c162.png" alt="UTHM Logo" class="uthm-logo">
-        </div>
-    </div>
+    <!-- OVERLAY 1: THE ROBOT SHELL -->
+    <div class="robot-shell-overlay"></div>
+
+    <!-- OVERLAY 2: THE BACKGROUND UTHM LOGO -->
+    <img src="image_c8c162_2.png" alt="UTHM Background" class="bg-watermark">
 
     <!-- SCREEN 1: CYAN TURBINE EYES -->
     <div id="screen-eyes" class="screen active">
