@@ -23,17 +23,18 @@
             -webkit-user-select: none;
         }
 
-        /* --- 1: THE ROBOT SHELL OVERLAY --- */
+        /* --- 1: THE ROBOT SHELL OVERLAY (ZOOMED IN) --- */
         .robot-shell-overlay {
             position: fixed;
-            top: 0; left: 0; 
+            top: 50%; left: 50%; 
             width: 100vw; height: 100vh;
+            
+            /* Stretches the image so only ~60% fits on the screen, cutting off the rest */
+            transform: translate(-50%, -50%) scale(1.7);
+            
             object-fit: fill; 
             pointer-events: none; 
             z-index: 9999;
-            
-            /* THIS IS THE MAGIC FIX */
-            /* It turns the solid black center of your image transparent! */
             mix-blend-mode: screen; 
         }
 
@@ -42,7 +43,7 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 450px; 
+            width: 550px; /* Scaled up to fit new shell */
             height: auto;
             opacity: 0.15; 
             pointer-events: none;
@@ -69,16 +70,16 @@
         /* --- SCREEN 1: CYAN TURBINE EYES --- */
         .eyes-container {
             display: flex;
-            gap: 120px;
-            margin-bottom: 50px;
+            gap: 160px; /* Increased gap */
+            margin-bottom: 70px;
         }
         
         .eye {
-            width: 220px;
-            height: 220px;
+            width: 260px; /* Scaled up */
+            height: 260px; /* Scaled up */
             border-radius: 50%;
             background-color: #001133;
-            box-shadow: 0 0 60px #0088ff, inset 0 0 50px #000;
+            box-shadow: 0 0 70px #0088ff, inset 0 0 60px #000;
             position: relative;
             display: flex;
             justify-content: center;
@@ -102,7 +103,7 @@
             width: 35%; height: 35%;
             border-radius: 50%;
             background: radial-gradient(circle, #fff 0%, #0ff 40%, transparent 70%);
-            box-shadow: 0 0 30px #fff;
+            box-shadow: 0 0 35px #fff;
         }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -111,10 +112,10 @@
             0%, 10% { transform: translate(0, 0) scale(1); }
             12%, 14% { transform: translate(0, 0) scaleY(0.1) scaleX(1.1); } 
             16%, 30% { transform: translate(0, 0) scale(1); }
-            35%, 45% { transform: translate(-45px, 0) scale(1); }
-            50%, 60% { transform: translate(45px, 0) scale(1); }
+            35%, 45% { transform: translate(-55px, 0) scale(1); }
+            50%, 60% { transform: translate(55px, 0) scale(1); }
             65%, 70% { transform: translate(0, 0) scale(1); }
-            75%, 85% { transform: translate(0, -10px) scaleY(0.8) scaleX(1.1); }
+            75%, 85% { transform: translate(0, -15px) scaleY(0.8) scaleX(1.1); }
             90% { transform: translate(0, 0) scale(1); }
             95%, 97% { transform: translate(0, 0) scaleY(0.1) scaleX(1.1); } 
             100% { transform: translate(0, 0) scale(1); }
@@ -124,15 +125,15 @@
             background: rgba(0, 136, 255, 0.1);
             border: 2px solid #0088ff;
             color: #0088ff;
-            padding: 20px 40px;
-            font-size: 24px;
+            padding: 25px 50px; /* Enlarged */
+            font-size: 28px;    /* Enlarged */
             border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
             font-family: inherit;
             font-weight: 700;
             letter-spacing: 2px;
-            box-shadow: 0 0 20px rgba(0, 136, 255, 0.4);
+            box-shadow: 0 0 25px rgba(0, 136, 255, 0.4);
             transition: all 0.2s ease;
             z-index: 10;
         }
@@ -144,22 +145,22 @@
 
         /* --- SCREEN 2: BLUEPRINT SCANNER --- */
         #screen-scan {
-            background-size: 40px 40px;
+            background-size: 50px 50px;
             background-image: 
                 linear-gradient(to right, rgba(0, 255, 0, 0.05) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
         }
 
         .scan-instruction {
-            font-size: 28px;
-            margin-bottom: 20px;
+            font-size: 34px; /* Enlarged */
+            margin-bottom: 30px;
             font-weight: 700;
             letter-spacing: 4px;
             animation: pulse 1s infinite alternate;
         }
         @keyframes pulse {
             from { opacity: 0.5; }
-            to { opacity: 1; text-shadow: 0 0 20px #0f0; }
+            to { opacity: 1; text-shadow: 0 0 25px #0f0; }
         }
 
         .scan-container {
@@ -168,6 +169,10 @@
             display: flex; flex-direction: column;
             align-items: center; justify-content: flex-start;
             cursor: pointer; z-index: 10; 
+            
+            /* Scales the entire scanner unit up by 25% */
+            transform: scale(1.25);
+            margin-top: 40px;
         }
 
         .circuit-lines {
@@ -222,7 +227,7 @@
         .scanner-line {
             position: absolute; top: 0; left: -50px;
             width: calc(100% + 100px); height: 4px;
-            background: #fff; box-shadow: 0 0 30px 10px #0f0;
+            background: #fff; box-shadow: 0 0 35px 12px #0f0;
             display: none; z-index: 10;
         }
 
@@ -236,26 +241,28 @@
         .scanning .palm { animation: scanGlow 0.5s forwards 2.0s; }
 
         @keyframes sweep { 0% { top: -20px; } 50% { top: 105%; } 100% { top: -20px; } }
-        @keyframes scanGlow { to { background: rgba(0, 255, 0, 0.3); box-shadow: 0 0 25px #0f0; border-color: #fff; } }
+        @keyframes scanGlow { to { background: rgba(0, 255, 0, 0.3); box-shadow: 0 0 30px #0f0; border-color: #fff; } }
 
         /* --- SCREEN 3: Success --- */
         .status-accepted {
-            font-size: 80px; color: #0f0; margin: 0;
-            text-shadow: 0 0 40px #0f0; letter-spacing: 8px; font-weight: 900;
+            font-size: 100px; /* Enlarged */
+            color: #0f0; margin: 0;
+            text-shadow: 0 0 50px #0f0; letter-spacing: 10px; font-weight: 900;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
         .welcome-msg {
-            font-size: 42px; color: #fff; margin: 30px 0 0 0; line-height: 1.5;
+            font-size: 50px; /* Enlarged */
+            color: #fff; margin: 40px 0 0 0; line-height: 1.5;
             animation: fadeIn 1s forwards 0.5s; opacity: 0;
         }
         @keyframes fadeIn { to { opacity: 1; } }
-        .highlight { color: #0f0; font-weight: 900; text-shadow: 0 0 15px #0f0; }
+        .highlight { color: #0f0; font-weight: 900; text-shadow: 0 0 20px #0f0; }
 
         /* --- SCREEN 4: Fullscreen Countdown --- */
         .countdown-number {
-            font-size: 40vw; font-weight: 900; color: #fff; margin: 0; line-height: 1;
+            font-size: 45vw; font-weight: 900; color: #fff; margin: 0; line-height: 1;
             animation: explode 1s infinite; 
         }
         @keyframes explode {
