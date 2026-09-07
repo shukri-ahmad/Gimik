@@ -12,9 +12,9 @@
         /* Base Styling */
         body {
             margin: 0;
-            background-color: #020a02;
+            background-color: #01050a; /* Dark blue/black faceplate glass */
             color: #0f0;
-            font-family: 'Orbitron', sans-serif; /* Futuristic Font */
+            font-family: 'Orbitron', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,6 +24,47 @@
             -webkit-user-select: none;
         }
 
+        /* --- ROBOT HEAD FRAME OVERLAY --- */
+        .robot-head-overlay {
+            position: fixed;
+            top: 0; left: 0; 
+            width: 100vw; height: 100vh;
+            pointer-events: none; /* Allows clicks to pass through to the screen */
+            z-index: 9999;
+            /* White robot casing */
+            border: 50px solid #e8edf2;
+            border-radius: 80px;
+            box-sizing: border-box;
+            box-shadow: 
+                inset 0 0 50px rgba(0,0,0,0.9), 
+                inset 0 0 100px rgba(0,0,0,0.5);
+        }
+
+        /* Forehead Notch for UTHM Logo */
+        .forehead-notch {
+            position: absolute;
+            top: -50px; /* Overlap the top border */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 90px;
+            background: #e8edf2;
+            border-radius: 0 0 50px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 10px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            /* Mechanical panel lines */
+            border-bottom: 3px solid #b0b8c0;
+        }
+        .uthm-logo {
+            width: 65px;
+            height: auto;
+            filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.3));
+        }
+
+        /* --- SCREEN CONTROLLER --- */
         .screen {
             display: none;
             flex-direction: column;
@@ -34,50 +75,80 @@
             text-align: center;
             position: absolute;
             top: 0; left: 0;
+            padding: 60px; /* Keep content away from the thick border */
+            box-sizing: border-box;
         }
         .screen.active { display: flex; }
 
-        /* --- SCREEN 1: EMO-Style Animated Eyes --- */
+        /* --- SCREEN 1: CYAN TURBINE EYES (Based on Reference) --- */
         .eyes-container {
             display: flex;
-            gap: 50px;
-            margin-bottom: 80px;
+            gap: 80px;
+            margin-bottom: 60px;
         }
+        
         .eye {
-            width: 140px; 
-            height: 100px;
-            background: #0f0;
-            border-radius: 40px; 
-            box-shadow: 0 0 40px #0f0, inset 0 0 15px #fff;
-            /* Complex 10-second animation cycle */
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background-color: #001133;
+            box-shadow: 0 0 50px #0088ff, inset 0 0 40px #000;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             animation: eye-behavior 10s infinite;
         }
 
-        /* Blinking, Looking, and Expressions */
+        /* Turbine / Iris Pattern */
+        .eye::before {
+            content: '';
+            position: absolute;
+            width: 85%; height: 85%;
+            border-radius: 50%;
+            background: repeating-conic-gradient(from 0deg, #0ff 0deg 5deg, #0033aa 6deg 10deg);
+            -webkit-mask-image: radial-gradient(circle, transparent 25%, black 26%, black 90%, transparent 100%);
+            animation: spin 20s linear infinite; 
+        }
+
+        /* Glowing Pupil */
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 35%; height: 35%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff 0%, #0ff 40%, transparent 70%);
+            box-shadow: 0 0 25px #fff;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
         @keyframes eye-behavior {
-            0%, 10% { transform: translate(0, 0) scaleY(1); border-radius: 40px; }
-            12%, 14% { transform: translate(0, 0) scaleY(0.1); border-radius: 10px; } /* Blink */
-            16%, 30% { transform: translate(0, 0) scaleY(1); border-radius: 40px; }
+            0%, 10% { transform: translate(0, 0) scale(1); }
+            12%, 14% { transform: translate(0, 0) scaleY(0.1) scaleX(1.1); } /* Blink */
+            16%, 30% { transform: translate(0, 0) scale(1); }
             
             /* Look Left */
-            35%, 45% { transform: translate(-45px, 0) scaleY(1); border-radius: 40px; }
+            35%, 45% { transform: translate(-40px, 0) scale(1); }
             /* Look Right */
-            50%, 60% { transform: translate(45px, 0) scaleY(1); border-radius: 40px; }
+            50%, 60% { transform: translate(40px, 0) scale(1); }
             
-            65%, 70% { transform: translate(0, 0) scaleY(1); border-radius: 40px; }
+            65%, 70% { transform: translate(0, 0) scale(1); }
             
-            /* Squint / Happy Expression (Cheeks push up) */
-            75%, 85% { transform: translate(0, -10px) scaleY(0.75); border-radius: 50px 50px 15px 15px; }
+            /* Squint / Happy Expression */
+            75%, 85% { transform: translate(0, -10px) scaleY(0.8) scaleX(1.1); }
             
-            90% { transform: translate(0, 0) scaleY(1); border-radius: 40px; }
-            95%, 97% { transform: translate(0, 0) scaleY(0.1); } /* Blink */
-            100% { transform: translate(0, 0) scaleY(1); border-radius: 40px; }
+            90% { transform: translate(0, 0) scale(1); }
+            95%, 97% { transform: translate(0, 0) scaleY(0.1) scaleX(1.1); } /* Blink */
+            100% { transform: translate(0, 0) scale(1); }
         }
         
         #initiate-btn {
-            background: rgba(0, 255, 0, 0.1);
-            border: 2px solid #0f0;
-            color: #0f0;
+            background: rgba(0, 136, 255, 0.1);
+            border: 2px solid #0088ff;
+            color: #0088ff;
             padding: 20px 40px;
             font-size: 24px;
             border-radius: 8px;
@@ -86,28 +157,27 @@
             font-family: inherit;
             font-weight: 700;
             letter-spacing: 2px;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.4);
             transition: all 0.2s ease;
             z-index: 10;
         }
         #initiate-btn:active {
-            background: #0f0;
-            color: #000;
+            background: #0088ff;
+            color: #fff;
             transform: scale(0.95);
         }
 
-        /* --- SCREEN 2: Blueprint Palm Scanner (Based on Ref Image) --- */
+        /* --- SCREEN 2: BLUEPRINT PALM SCANNER --- */
         #screen-scan {
-            /* Blueprint Grid Background */
             background-size: 40px 40px;
             background-image: 
-                linear-gradient(to right, rgba(0, 255, 0, 0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+                linear-gradient(to right, rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
         }
 
         .scan-instruction {
             font-size: 28px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-weight: 700;
             letter-spacing: 4px;
             animation: pulse 1s infinite alternate;
@@ -126,9 +196,9 @@
             align-items: center;
             justify-content: flex-start;
             cursor: pointer;
+            z-index: 10; /* Ensures it can be clicked above background */
         }
 
-        /* Circuit line running behind everything */
         .circuit-lines {
             position: absolute;
             top: 50px;
@@ -149,36 +219,27 @@
             transform: translateX(-50%);
         }
 
-        .fingers {
-            position: relative;
-            width: 300px;
-            height: 180px;
-            z-index: 2;
-        }
+        .fingers { position: relative; width: 300px; height: 180px; z-index: 2; }
         
-        /* Node style based on blueprint image */
         .finger {
             position: absolute;
             width: 45px;
             border: 2px solid #0f0;
             border-radius: 25px;
-            background: #020a02;
+            background: #01050a;
             bottom: 0;
             transition: all 0.4s;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        /* Inner print element */
         .finger::after {
             content: '';
-            width: 60%;
-            height: 70%;
+            width: 60%; height: 70%;
             border-radius: 20px;
             border: 1px dashed rgba(0, 255, 0, 0.4);
         }
 
-        /* Positioning the blueprint nodes */
         .finger:nth-child(1) { height: 90px; left: 0px; transform: rotate(-35deg); transform-origin: bottom right; bottom: -20px; }
         .finger:nth-child(2) { height: 120px; left: 70px; transform: rotate(-10deg); transform-origin: bottom right; }
         .finger:nth-child(3) { height: 135px; left: 135px; transform: rotate(0deg); }
@@ -186,59 +247,42 @@
         .finger:nth-child(5) { height: 100px; left: 260px; transform: rotate(25deg); transform-origin: bottom left; bottom: 10px; }
 
         .palm {
-            width: 200px;
-            height: 190px;
+            width: 200px; height: 190px;
             border: 2px solid #0f0;
             border-radius: 40% 40% 50% 50%;
-            background: #020a02;
-            position: relative;
-            z-index: 2;
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: #01050a;
+            position: relative; z-index: 2; margin-top: 10px;
+            display: flex; justify-content: center; align-items: center;
         }
         .palm::after {
             content: '';
-            width: 70%;
-            height: 70%;
+            width: 70%; height: 70%;
             border-radius: 40%;
             border: 1px dashed rgba(0, 255, 0, 0.4);
         }
 
-        /* Tech Data Box (Bottom Right) */
         .tech-data {
             position: absolute;
-            bottom: 20px;
-            right: -80px;
+            bottom: 20px; right: -60px;
             border: 1px solid #0f0;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 10px;
-            text-align: right;
-            background: rgba(0, 10, 0, 0.8);
-            color: rgba(0, 255, 0, 0.7);
-            z-index: 5;
-            display: none;
+            border-radius: 10px; padding: 10px;
+            font-size: 10px; text-align: right;
+            background: rgba(0, 10, 0, 0.8); color: rgba(0, 255, 0, 0.7);
+            z-index: 5; display: none;
         }
 
-        /* Scanner Laser */
         .scanner-line {
             position: absolute;
-            top: 0;
-            left: -50px;
-            width: calc(100% + 100px);
-            height: 4px;
+            top: 0; left: -50px;
+            width: calc(100% + 100px); height: 4px;
             background: #fff;
             box-shadow: 0 0 30px 10px #0f0;
-            display: none;
-            z-index: 10;
+            display: none; z-index: 10;
         }
 
         /* Scanning Active Animations */
         .scanning .scanner-line { display: block; animation: sweep 2s linear infinite; }
         .scanning .tech-data { display: block; animation: fadeIn 0.5s forwards; }
-        
         .scanning .finger:nth-child(1) { animation: scanGlow 0.4s forwards 0.5s; }
         .scanning .finger:nth-child(2) { animation: scanGlow 0.4s forwards 0.8s; }
         .scanning .finger:nth-child(3) { animation: scanGlow 0.4s forwards 1.1s; }
@@ -252,21 +296,13 @@
             100% { top: -20px; }
         }
         @keyframes scanGlow {
-            to { 
-                background: rgba(0, 255, 0, 0.3); 
-                box-shadow: 0 0 25px #0f0; 
-                border-color: #fff;
-            }
+            to { background: rgba(0, 255, 0, 0.3); box-shadow: 0 0 25px #0f0; border-color: #fff; }
         }
 
         /* --- SCREEN 3: Success --- */
         .status-accepted {
-            font-size: 80px;
-            color: #0f0;
-            margin: 0;
-            text-shadow: 0 0 40px #0f0;
-            letter-spacing: 8px;
-            font-weight: 900;
+            font-size: 80px; color: #0f0; margin: 0;
+            text-shadow: 0 0 40px #0f0; letter-spacing: 8px; font-weight: 900;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         @keyframes popIn {
@@ -274,28 +310,15 @@
             100% { transform: scale(1); opacity: 1; }
         }
         .welcome-msg {
-            font-size: 42px;
-            color: #fff;
-            margin: 30px 0 0 0;
-            line-height: 1.5;
-            animation: fadeIn 1s forwards 0.5s;
-            opacity: 0;
+            font-size: 42px; color: #fff; margin: 30px 0 0 0; line-height: 1.5;
+            animation: fadeIn 1s forwards 0.5s; opacity: 0;
         }
         @keyframes fadeIn { to { opacity: 1; } }
-        .highlight {
-            color: #0f0;
-            font-weight: 900;
-            text-shadow: 0 0 15px #0f0;
-        }
+        .highlight { color: #0f0; font-weight: 900; text-shadow: 0 0 15px #0f0; }
 
         /* --- SCREEN 4: Fullscreen Countdown --- */
-        #screen-countdown { background-color: #020a02; z-index: 50; }
         .countdown-number {
-            font-size: 50vw; 
-            font-weight: 900;
-            color: #fff;
-            margin: 0;
-            line-height: 1;
+            font-size: 40vw; font-weight: 900; color: #fff; margin: 0; line-height: 1;
             animation: explode 1s infinite; 
         }
         @keyframes explode {
@@ -305,16 +328,21 @@
         }
 
         /* --- SCREEN 5: Blank --- */
-        #screen-blank {
-            background-color: #000; /* Pure black */
-            z-index: 100;
-        }
+        #screen-blank { background-color: #000; }
 
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: EMO ROBOT EYES -->
+    <!-- ROBOT HEAD FOREGROUND OVERLAY -->
+    <div class="robot-head-overlay">
+        <div class="forehead-notch">
+            <!-- References the UTHM Logo image directly -->
+            <img src="image_c8c162.png" alt="UTHM Logo" class="uthm-logo">
+        </div>
+    </div>
+
+    <!-- SCREEN 1: CYAN TURBINE EYES -->
     <div id="screen-eyes" class="screen active">
         <div class="eyes-container">
             <div class="eye"></div>
@@ -340,7 +368,6 @@
             </div>
             <div class="palm"></div>
 
-            <!-- Technical data box matching reference image -->
             <div class="tech-data">
                 197.148.1.254<br>
                 //197.168.1.445 - //197.168.1.ASD<br>
@@ -388,38 +415,32 @@
         document.getElementById('guest-name-display').innerText = guestName;
         document.getElementById('event-name-display').innerText = eventName;
 
-        // Step 1: Eyes -> Scanner
         function startScanning() {
             screenEyes.classList.remove('active');
             screenScan.classList.add('active');
             
-            // Reset states
             scanPad.classList.remove('scanning');
             document.querySelector('.scan-instruction').innerText = "AWAITING BIOMETRIC INPUT";
             
-            // Remove previous inline styles added by keyframes (reset visual state)
             const handParts = document.querySelectorAll('.finger, .palm');
             handParts.forEach(part => {
                 part.style.animation = 'none';
-                part.offsetHeight; /* Trigger reflow to restart animation later */
+                part.offsetHeight; 
                 part.style.animation = null; 
             });
         }
 
-        // Step 2: Touch Pad -> Animate Scan
         function triggerScanAnimation() {
             if(scanPad.classList.contains('scanning')) return; 
 
             document.querySelector('.scan-instruction').innerText = "ANALYZING BIOMETRICS...";
             scanPad.classList.add('scanning');
 
-            // Wait for scan sweep and finger glow to finish
             setTimeout(() => {
                 showSuccessScreen();
             }, 3500);
         }
 
-        // Step 3: Show Success message
         function showSuccessScreen() {
             screenScan.classList.remove('active');
             screenSuccess.classList.add('active');
@@ -429,7 +450,6 @@
             }, 3000);
         }
 
-        // Step 4: Big Fullscreen Countdown
         function startFullscreenCountdown() {
             screenSuccess.classList.remove('active');
             screenCountdown.classList.add('active');
@@ -440,9 +460,7 @@
             const countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    setTimeout(() => {
-                        countdownDisplay.innerText = count;
-                    }, 50); 
+                    setTimeout(() => { countdownDisplay.innerText = count; }, 50); 
                 } else {
                     clearInterval(countdownInterval);
                     showBlankScreen();
@@ -450,17 +468,15 @@
             }, 1000);
         }
 
-        // Step 5: Blank screen for 5 seconds
         function showBlankScreen() {
             screenCountdown.classList.remove('active');
             screenBlank.classList.add('active');
 
             setTimeout(() => {
                 resetToStart();
-            }, 5000); // 5 seconds blank
+            }, 5000);
         }
 
-        // Step 6: Back to eyes (but hide the button!)
         function resetToStart() {
             screenBlank.classList.remove('active');
             screenEyes.classList.add('active');
