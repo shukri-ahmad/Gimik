@@ -23,6 +23,32 @@
             -webkit-user-select: none;
         }
 
+        /* --- FULLSCREEN BUTTON --- */
+        #fullscreen-btn {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            color: rgba(0, 255, 0, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10000; /* Ensures it sits above the robot shell */
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        #fullscreen-btn:hover, #fullscreen-btn:active {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #0f0;
+            color: #0f0;
+        }
+
         /* --- 1: THE ROBOT SHELL OVERLAY --- */
         .robot-shell-overlay {
             position: fixed;
@@ -274,11 +300,9 @@
             margin: 0; 
             line-height: 1;
             text-shadow: 0 0 30px #0f0, 0 0 60px #0f0;
-            /* Sharp glitchy pop effect */
             animation: digital-pop 1s infinite; 
         }
 
-        /* Clean scale and fade effect per second */
         @keyframes digital-pop {
             0% { transform: scale(0.8); opacity: 0; }
             10% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 50px #0f0, 0 0 100px #0f0; }
@@ -287,7 +311,6 @@
             100% { transform: scale(0.8); opacity: 0; }
         }
 
-        /* Progress Bar styling */
         .progress-bar-container {
             width: 60%;
             max-width: 600px;
@@ -295,19 +318,18 @@
             border: 2px solid #0f0;
             background: rgba(0, 50, 0, 0.4);
             border-radius: 10px;
-            margin-top: 120px; /* Pushes the bar below the number */
+            margin-top: 120px; 
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
             overflow: hidden;
         }
 
         .progress-bar-fill {
             height: 100%;
-            width: 0%; /* Starts empty (0%) */
+            width: 0%; 
             background: #0f0;
             box-shadow: 0 0 20px #0f0, inset 0 0 10px #fff;
         }
 
-        /* The animation class triggered by JavaScript (grows to 100%) */
         @keyframes grow-bar {
             0% { width: 0%; }
             100% { width: 100%; }
@@ -319,6 +341,9 @@
     </style>
 </head>
 <body>
+
+    <!-- FULLSCREEN TOGGLE BUTTON -->
+    <button id="fullscreen-btn" onclick="toggleFullScreen()" title="Toggle Fullscreen">⛶</button>
 
     <!-- OVERLAY 1: THE ROBOT SHELL -->
     <img src="shell.png" alt="Robot Frame" class="robot-shell-overlay">
@@ -378,7 +403,6 @@
             <div class="countdown-number" id="countdown-display">5</div>
             
             <div class="progress-bar-container">
-                <!-- The fill grows via JS triggering the animation -->
                 <div class="progress-bar-fill" id="progress-fill"></div>
             </div>
         </div>
@@ -406,6 +430,19 @@
         // Apply config
         document.getElementById('guest-name-display').innerText = guestName;
         document.getElementById('event-name-display').innerText = eventName;
+
+        // --- FULLSCREEN LOGIC ---
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 
         function startScanning() {
             screenEyes.classList.remove('active');
@@ -446,9 +483,8 @@
             screenSuccess.classList.remove('active');
             screenCountdown.classList.add('active');
 
-            // Reset and trigger the 5-second grow animation on the progress bar
             progressFill.style.animation = 'none';
-            progressFill.offsetHeight; /* forces the browser to reflow so it resets */
+            progressFill.offsetHeight; 
             progressFill.style.animation = 'grow-bar 5s linear forwards';
 
             let count = 5;
