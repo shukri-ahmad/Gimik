@@ -28,10 +28,7 @@
             position: fixed;
             top: 50%; left: 50%; 
             width: 100vw; height: 100vh;
-            
-            /* Zoomed to 1.3 */
             transform: translate(-50%, -50%) scale(1.3);
-            
             object-fit: fill; 
             pointer-events: none; 
             z-index: 9999;
@@ -71,7 +68,7 @@
         .eyes-container {
             display: flex;
             gap: 160px; 
-            margin-bottom: 120px; /* Pushes the button lower */
+            margin-bottom: 120px; 
         }
         
         .eye {
@@ -259,88 +256,62 @@
         @keyframes fadeIn { to { opacity: 1; } }
         .highlight { color: #0f0; font-weight: 900; text-shadow: 0 0 20px #0f0; }
 
-        /* --- SCREEN 4: SCI-FI HUD COUNTDOWN --- */
+        /* --- SCREEN 4: COUNTDOWN WITH PROGRESS BAR --- */
         .countdown-wrapper {
             position: relative;
-            width: 350px;
-            height: 350px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            transform: scale(1.6); /* Scale up to dominate the screen */
+            width: 100%;
             z-index: 20;
         }
 
         .countdown-number {
-            font-size: 160px; 
+            font-size: 250px; 
             font-weight: 900; 
             color: #fff; 
             margin: 0; 
             line-height: 1;
-            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 80px #0f0;
-            z-index: 5;
-            /* Syncs precisely with the 1-second JavaScript interval */
+            text-shadow: 0 0 30px #0f0, 0 0 60px #0f0;
+            /* Sharp glitchy pop effect */
             animation: digital-pop 1s infinite; 
         }
 
-        /* Sharp glitchy pop effect matching stock video style */
+        /* Clean scale and fade effect per second */
         @keyframes digital-pop {
-            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
-            10% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
-            25% { transform: scale(1); opacity: 1; }
-            85% { transform: scale(1); opacity: 1; filter: blur(0px); }
-            100% { transform: scale(1.5); opacity: 0; filter: blur(10px); }
+            0% { transform: scale(0.8); opacity: 0; }
+            10% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 50px #0f0, 0 0 100px #0f0; }
+            20% { transform: scale(1); opacity: 1; text-shadow: 0 0 20px #0f0; }
+            90% { transform: scale(1); opacity: 1; text-shadow: 0 0 20px #0f0; }
+            100% { transform: scale(0.8); opacity: 0; }
         }
 
-        /* Rotating HUD Rings */
-        .ring {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            box-sizing: border-box;
+        /* Progress Bar styling */
+        .progress-bar-container {
+            width: 60%;
+            max-width: 600px;
+            height: 15px;
+            border: 2px solid #0f0;
+            background: rgba(0, 50, 0, 0.4);
+            border-radius: 10px;
+            margin-top: 120px; /* Pushes the bar below the number */
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            overflow: hidden;
         }
 
-        /* Outer dashed ring */
-        .ring-1 {
-            width: 100%; height: 100%;
-            border: 4px dashed rgba(0, 255, 0, 0.7);
-            animation: spin 6s linear infinite;
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%; /* Starts empty (0%) */
+            background: #0f0;
+            box-shadow: 0 0 20px #0f0, inset 0 0 10px #fff;
         }
 
-        /* Glowing thick inner ring with gaps */
-        .ring-2 {
-            width: 85%; height: 85%;
-            border-top: 6px solid #0f0;
-            border-bottom: 6px solid #0f0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            animation: spin-reverse 3s linear infinite;
-            box-shadow: 0 0 15px #0f0, inset 0 0 15px #0f0;
+        /* The animation class triggered by JavaScript (grows to 100%) */
+        @keyframes grow-bar {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
-
-        /* Inner dotted track */
-        .ring-3 {
-            width: 70%; height: 70%;
-            border: 3px dotted #fff;
-            animation: spin 4s linear infinite;
-        }
-
-        /* Digital crosshairs */
-        .crosshair-h {
-            position: absolute;
-            width: 140%; height: 2px;
-            background: linear-gradient(to right, transparent, rgba(0,255,0,0.6), transparent);
-            z-index: 1;
-        }
-        .crosshair-v {
-            position: absolute;
-            height: 140%; width: 2px;
-            background: linear-gradient(to bottom, transparent, rgba(0,255,0,0.6), transparent);
-            z-index: 1;
-        }
-
-        @keyframes spin-reverse { 100% { transform: translate(-50%, -50%) rotate(-360deg); } }
 
         /* --- SCREEN 5: Blank --- */
         #screen-blank { background-color: #000; }
@@ -401,15 +372,15 @@
         </div>
     </div>
 
-    <!-- SCREEN 4: SCI-FI HUD COUNTDOWN -->
+    <!-- SCREEN 4: COUNTDOWN WITH PROGRESS BAR -->
     <div id="screen-countdown" class="screen">
         <div class="countdown-wrapper">
-            <div class="crosshair-h"></div>
-            <div class="crosshair-v"></div>
-            <div class="ring ring-1"></div>
-            <div class="ring ring-2"></div>
-            <div class="ring ring-3"></div>
             <div class="countdown-number" id="countdown-display">5</div>
+            
+            <div class="progress-bar-container">
+                <!-- The fill grows via JS triggering the animation -->
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
         </div>
     </div>
 
@@ -430,6 +401,7 @@
         const scanPad = document.getElementById('scan-pad');
         const countdownDisplay = document.getElementById('countdown-display');
         const initiateBtn = document.getElementById('initiate-btn');
+        const progressFill = document.getElementById('progress-fill');
 
         // Apply config
         document.getElementById('guest-name-display').innerText = guestName;
@@ -474,10 +446,14 @@
             screenSuccess.classList.remove('active');
             screenCountdown.classList.add('active');
 
+            // Reset and trigger the 5-second grow animation on the progress bar
+            progressFill.style.animation = 'none';
+            progressFill.offsetHeight; /* forces the browser to reflow so it resets */
+            progressFill.style.animation = 'grow-bar 5s linear forwards';
+
             let count = 5;
             countdownDisplay.innerText = count;
 
-            // Sync JS exact seconds with CSS 1-second animation loop
             const countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
