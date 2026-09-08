@@ -275,7 +275,7 @@
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
         .welcome-msg {
-            font-size: 50px; 
+            font-size: 32px; /* Adjusted down to fit the longer program name */
             color: #fff; margin: 40px 0 0 0; line-height: 1.5;
             animation: fadeIn 1s forwards 0.5s; opacity: 0;
         }
@@ -344,11 +344,7 @@
         .final-logo {
             max-width: 70%;
             max-height: 70%;
-            
-            /* Magic trick for JPGs: This deletes a solid black background */
             mix-blend-mode: screen;
-
-            /* This applies the white glow/outline to the image */
             filter: 
                 drop-shadow(3px 3px 0px #fff) 
                 drop-shadow(-3px -3px 0px #fff) 
@@ -419,7 +415,7 @@
         <h1 class="status-accepted">ACCESS GRANTED</h1>
         <div class="welcome-msg">
             Welcome <span class="highlight" id="guest-name-display">Guest</span><br>
-            to <span class="highlight" id="event-name-display">The Event</span>
+            to <br><span class="highlight" id="event-name-display">The Event</span>
         </div>
     </div>
 
@@ -436,14 +432,15 @@
 
     <!-- SCREEN 5: FINAL LOGO SCREEN (Displays for 30 sec) -->
     <div id="screen-final-logo" class="screen">
-        <!-- EXACT FILENAME RESTORED -->
-        <img src="LOGO-Photoroom.jpg" alt="Final Logo Error - Please check file name/location" class="final-logo">
+        <img src="final-logo.jpg" alt="Final Logo Error - Please check file name/location" class="final-logo">
     </div>
 
     <script>
         // --- CONFIGURATION ---
         const guestName = "VIP GUEST";
-        const eventName = "DIGITAL ED SUMMIT 2026";
+        
+        // The newly requested long event name with line breaks added for proper display formatting
+        const eventName = "MAJLIS PELANTIKAN SEKOLAH ANGKAT<br>UNIVERSITI TUN HUSSEIN ONN MALAYSIA FASA 3<br>DAN MAJLIS PENUTUPAN KEMBARA MERDEKA DIGITAL";
         
         // --- DOM Elements ---
         const screenEyes = document.getElementById('screen-eyes');
@@ -458,7 +455,8 @@
 
         // Apply config
         document.getElementById('guest-name-display').innerText = guestName;
-        document.getElementById('event-name-display').innerText = eventName;
+        // Using innerHTML to ensure the <br> tags properly create line breaks for the long text
+        document.getElementById('event-name-display').innerHTML = eventName;
 
         // ==========================================
         //         AUDIO SYNTHESIZER ENGINE
