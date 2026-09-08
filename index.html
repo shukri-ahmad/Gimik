@@ -335,7 +335,7 @@
             100% { width: 100%; }
         }
 
-        /* --- SCREEN 5: FINAL LOGO (Replacing Blank Screen) --- */
+        /* --- SCREEN 5: FINAL LOGO --- */
         #screen-final-logo { 
             background-color: #000; 
             z-index: 100; /* Highest priority to cover everything */
@@ -435,8 +435,8 @@
 
     <!-- SCREEN 5: FINAL LOGO SCREEN (Displays for 30 sec) -->
     <div id="screen-final-logo" class="screen">
-        <!-- Replaces the blank screen with the Kem Digital Johor Logo -->
-        <img src="LOGO-Photoroom.jpg" alt="Final Logo" class="final-logo">
+        <!-- Changed to final-logo.jpg to ensure it loads properly -->
+        <img src="final-logo.jpg" alt="Final Logo" class="final-logo">
     </div>
 
     <script>
@@ -458,7 +458,6 @@
         // Apply config
         document.getElementById('guest-name-display').innerText = guestName;
         document.getElementById('event-name-display').innerText = eventName;
-
 
         // ==========================================
         //         AUDIO SYNTHESIZER ENGINE
@@ -551,7 +550,6 @@
             }
         }
 
-
         // ==========================================
         //         APPLICATION LOGIC
         // ==========================================
@@ -639,8 +637,6 @@
             playBassDrop(); 
 
             screenCountdown.classList.remove('active');
-            
-            // Show the new Final Logo Screen
             screenFinalLogo.classList.add('active');
 
             // Wait exactly 30 seconds before resetting back to eyes
