@@ -196,11 +196,9 @@
             transform: scale(1.15);
             margin-top: 30px;
             border-radius: 50%;
-            /* Subtle outer glow for the container */
             box-shadow: 0 0 30px rgba(0,255,0,0.1);
         }
 
-        /* The user's palm image */
         .generated-palm-image {
             width: 100%;
             height: 100%;
@@ -212,7 +210,6 @@
             z-index: 2;
         }
 
-        /* Interactive HUD Overlays */
         .hud-overlay {
             position: absolute;
             top: 0; left: 0; 
@@ -223,7 +220,6 @@
             transition: opacity 0.3s;
         }
 
-        /* Flashing grid during scan */
         .scan-grid {
             position: absolute;
             top: 10%; left: 10%; width: 80%; height: 80%;
@@ -236,7 +232,6 @@
             z-index: 1;
         }
 
-        /* Techy text elements */
         .hud-text {
             position: absolute;
             font-size: 14px;
@@ -250,7 +245,6 @@
         .bottom-left { bottom: 20px; left: 20px; }
         .bottom-right { bottom: 20px; right: 20px; text-align: right; }
 
-        /* The sweeping scanner line */
         .scanner-line {
             position: absolute; top: 0; left: -10%;
             width: 120%; height: 6px;
@@ -259,20 +253,10 @@
             border-radius: 50%;
         }
 
-        /* --- ACTIVE SCANNING ANIMATIONS --- */
         .scanning .scanner-line { display: block; animation: sweep 2s linear infinite; }
-        
-        .scanning .generated-palm-image {
-            animation: imageScanGlow 0.5s forwards 0.2s;
-        }
-
-        .scanning .hud-overlay {
-            opacity: 1;
-        }
-
-        .scanning .scan-grid {
-            animation: flashGrid 0.2s infinite alternate;
-        }
+        .scanning .generated-palm-image { animation: imageScanGlow 0.5s forwards 0.2s; }
+        .scanning .hud-overlay { opacity: 1; }
+        .scanning .scan-grid { animation: flashGrid 0.2s infinite alternate; }
 
         @keyframes sweep { 
             0% { top: 0%; opacity: 0; } 
@@ -282,10 +266,7 @@
         }
         
         @keyframes imageScanGlow { 
-            to { 
-                opacity: 1; 
-                filter: drop-shadow(0 0 40px #0f0) brightness(1.8);
-            } 
+            to { opacity: 1; filter: drop-shadow(0 0 40px #0f0) brightness(1.8); } 
         }
 
         @keyframes flashGrid {
@@ -363,29 +344,51 @@
             100% { width: 100%; }
         }
 
-        /* --- SCREEN 5: FINAL LOGO --- */
+        /* --- SCREEN 5: FINAL LOGO (3D ROTATING) --- */
         #screen-final-logo { 
             background-color: #000; 
             z-index: 100; 
         }
 
+        /* The container handles the zoom-in */
+        .final-logo-container {
+            width: 70%;
+            height: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: zoomInLogo 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            perspective: 1200px; /* Gives the rotation a realistic 3D depth */
+        }
+
+        /* The image itself handles the infinite 3D spin */
         .final-logo {
-            max-width: 70%;
-            max-height: 70%;
-            mix-blend-mode: screen;
+            max-width: 100%;
+            max-height: 100%;
+            
+            /* Erases the black background of the image */
+            mix-blend-mode: screen; 
+            
+            /* The white stroke/glow effect */
             filter: 
-                drop-shadow(3px 3px 0px #fff) 
-                drop-shadow(-3px -3px 0px #fff) 
-                drop-shadow(3px -3px 0px #fff) 
-                drop-shadow(-3px 3px 0px #fff)
+                drop-shadow(2px 2px 0px #fff) 
+                drop-shadow(-2px -2px 0px #fff) 
+                drop-shadow(2px -2px 0px #fff) 
+                drop-shadow(-2px 2px 0px #fff)
                 drop-shadow(0px 0px 30px rgba(255, 255, 255, 0.8));
             
-            animation: zoomInLogo 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            /* 3D Spin Animation (6 seconds per full rotation) */
+            animation: spin3D 6s linear infinite;
         }
 
         @keyframes zoomInLogo {
             0% { transform: scale(0.3); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes spin3D {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
         }
 
     </style>
@@ -416,23 +419,16 @@
         
         <div class="scan-container" id="scan-pad" onclick="triggerScanAnimation()">
             
-            <!-- Using the newly provided image -->
             <img src="palms.jpg" alt="Scanning Interface" class="generated-palm-image">
             
-            <!-- Interactive HUD that sits over the image -->
             <div class="hud-overlay">
                 <div class="hud-text top-left">SYS.VER: 9.0.4<br>STATUS: IDLE</div>
                 <div class="hud-text top-right">BIO-METRIC<br>RECEIVER</div>
-                <!-- Geolocation targeted to Parit Raja, Johor -->
                 <div class="hud-text bottom-left">LAT: 01.866<br>LON: 103.111</div>
-                <!-- This data stream will animate during the scan -->
                 <div class="hud-text bottom-right" id="data-stream">ID: [WAITING]<br>UID: [NULL]</div>
             </div>
 
-            <!-- Faint grid that flashes during scan -->
             <div class="scan-grid"></div>
-
-            <!-- Heavy sweeping laser line -->
             <div class="scanner-line"></div>
         </div>
     </div>
@@ -457,9 +453,13 @@
         </div>
     </div>
 
-    <!-- SCREEN 5: FINAL LOGO SCREEN -->
+    <!-- SCREEN 5: FINAL 3D ROTATING LOGO SCREEN -->
     <div id="screen-final-logo" class="screen">
-        <img src="final-logo.jpg" alt="Final Logo Error" class="final-logo">
+        <div class="final-logo-container">
+            <!-- Uses your specific exact file name -->
+            <!-- Note: If it doesn't load, rename your file to 'logo.png' and change this src -->
+            <img src="ChatGPT Image Sep 8, 2026, 05_39_11 PM.png" alt="Final Logo Error" class="final-logo">
+        </div>
     </div>
 
     <script>
@@ -480,12 +480,11 @@
         const generatedPalmImage = document.querySelector('.generated-palm-image');
         const dataStream = document.getElementById('data-stream');
 
+        let scrambleInterval;
+
         // Apply config
         document.getElementById('guest-name-display').innerText = guestName;
         document.getElementById('event-name-display').innerHTML = eventName;
-
-        // Variables for the interactive text
-        let scrambleInterval;
 
         // ==========================================
         //         AUDIO SYNTHESIZER ENGINE
@@ -605,13 +604,11 @@
             document.querySelector('.scan-instruction').innerText = "AWAITING BIOMETRIC INPUT";
             dataStream.innerHTML = "ID: [WAITING]<br>UID: [NULL]";
             
-            // Reset image animation if looping
             generatedPalmImage.style.animation = 'none';
             generatedPalmImage.offsetHeight;
             generatedPalmImage.style.animation = null;
         }
 
-        // Generates random alphanumeric strings to look like scanning data
         function startDataScramble() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             scrambleInterval = setInterval(() => {
@@ -619,7 +616,7 @@
                 for(let i=0; i<8; i++) r1 += chars.charAt(Math.floor(Math.random() * chars.length));
                 for(let i=0; i<12; i++) r2 += chars.charAt(Math.floor(Math.random() * chars.length));
                 dataStream.innerHTML = `ID: ${r1}<br>UID: ${r2}`;
-            }, 50); // Updates very fast
+            }, 50); 
         }
 
         function triggerScanAnimation() {
@@ -631,7 +628,6 @@
             startScanSound();
             startDataScramble();
 
-            // The scan animation lasts exactly 3.5 seconds
             setTimeout(() => {
                 stopScanSound();
                 clearInterval(scrambleInterval);
