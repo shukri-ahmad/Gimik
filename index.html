@@ -11,7 +11,7 @@
         /* Base Styling */
         body {
             margin: 0;
-            background-color: #010408; /* Deep glass color */
+            background-color: #010408; 
             color: #0f0;
             font-family: 'Orbitron', sans-serif;
             display: flex;
@@ -338,16 +338,17 @@
         /* --- SCREEN 5: FINAL LOGO --- */
         #screen-final-logo { 
             background-color: #000; 
-            z-index: 100; /* Highest priority to cover everything */
+            z-index: 100; 
         }
 
         .final-logo {
             max-width: 70%;
             max-height: 70%;
-            /* 
-               This applies a multi-layered drop-shadow to create a solid WHITE OUTLINE 
-               around the image elements, followed by a soft white glow! 
-            */
+            
+            /* Magic trick for JPGs: This deletes a solid black background */
+            mix-blend-mode: screen;
+
+            /* This applies the white glow/outline to the image */
             filter: 
                 drop-shadow(3px 3px 0px #fff) 
                 drop-shadow(-3px -3px 0px #fff) 
@@ -435,8 +436,8 @@
 
     <!-- SCREEN 5: FINAL LOGO SCREEN (Displays for 30 sec) -->
     <div id="screen-final-logo" class="screen">
-        <!-- Changed to final-logo.jpg to ensure it loads properly -->
-        <img src="final-logo.jpg" alt="Final Logo" class="final-logo">
+        <!-- EXACT FILENAME RESTORED -->
+        <img src="LOGO-Photoroom.jpg" alt="Final Logo Error - Please check file name/location" class="final-logo">
     </div>
 
     <script>
