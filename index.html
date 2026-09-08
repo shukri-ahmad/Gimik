@@ -35,7 +35,7 @@
             height: 40px;
             border-radius: 5px;
             cursor: pointer;
-            z-index: 10000; /* Ensures it sits above the robot shell */
+            z-index: 10000; 
             font-size: 20px;
             display: flex;
             justify-content: center;
@@ -431,7 +431,109 @@
         document.getElementById('guest-name-display').innerText = guestName;
         document.getElementById('event-name-display').innerText = eventName;
 
-        // --- FULLSCREEN LOGIC ---
+
+        // ==========================================
+        //         AUDIO SYNTHESIZER ENGINE
+        // ==========================================
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let scanOsc = null;
+        let scanGain = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Generic function to play short tones
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            // Quick decay for a punchy digital sound
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playStartupSound() {
+            playTone(600, 'square', 0.1, 0.05);
+            setTimeout(() => playTone(900, 'square', 0.2, 0.05), 100);
+        }
+
+        function playSuccessSound() {
+            // A major chord arpeggio
+            playTone(440, 'sine', 1, 0.1);   // A4
+            setTimeout(() => playTone(554.37, 'sine', 1, 0.1), 100); // C#5
+            setTimeout(() => playTone(659.25, 'sine', 1.5, 0.1), 200); // E5
+        }
+
+        function playCountdownBeep() {
+            playTone(800, 'square', 0.15, 0.05); // High pitch short beep
+        }
+
+        function playBassDrop() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            
+            // Frequency drops from 150hz down to 20hz
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 2);
+            
+            // Volume fades out
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 3);
+        }
+
+        function startScanSound() {
+            if (!audioCtx) return;
+            scanOsc = audioCtx.createOscillator();
+            scanGain = audioCtx.createGain();
+            scanOsc.type = 'sawtooth';
+            
+            // Simulates a sweeping scanner frequency
+            scanOsc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            scanOsc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 1.5);
+            scanOsc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 3.0);
+            
+            scanGain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+            
+            scanOsc.connect(scanGain);
+            scanGain.connect(audioCtx.destination);
+            scanOsc.start();
+        }
+
+        function stopScanSound() {
+            if (scanOsc) {
+                scanOsc.stop();
+                scanOsc.disconnect();
+                scanGain.disconnect();
+            }
+        }
+
+
+        // ==========================================
+        //         APPLICATION LOGIC
+        // ==========================================
+
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -445,6 +547,10 @@
         }
 
         function startScanning() {
+            // Initialize audio engine on first user click!
+            initAudio();
+            playStartupSound();
+
             screenEyes.classList.remove('active');
             screenScan.classList.add('active');
             
@@ -465,12 +571,18 @@
             document.querySelector('.scan-instruction').innerText = "ANALYZING BIOMETRICS...";
             scanPad.classList.add('scanning');
 
+            // Play the hum sound
+            startScanSound();
+
             setTimeout(() => {
+                stopScanSound();
                 showSuccessScreen();
             }, 3500);
         }
 
         function showSuccessScreen() {
+            playSuccessSound();
+
             screenScan.classList.remove('active');
             screenSuccess.classList.add('active');
 
@@ -489,11 +601,13 @@
 
             let count = 5;
             countdownDisplay.innerText = count;
+            playCountdownBeep(); // Play the very first beep instantly
 
             const countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
                     countdownDisplay.innerText = count;
+                    playCountdownBeep(); // Play a beep on every number
                 } else {
                     clearInterval(countdownInterval);
                     showBlankScreen();
@@ -502,6 +616,8 @@
         }
 
         function showBlankScreen() {
+            playBassDrop(); // Massive shutdown boom
+
             screenCountdown.classList.remove('active');
             screenBlank.classList.add('active');
 
