@@ -335,8 +335,33 @@
             100% { width: 100%; }
         }
 
-        /* --- SCREEN 5: Blank --- */
-        #screen-blank { background-color: #000; }
+        /* --- SCREEN 5: FINAL LOGO (Replacing Blank Screen) --- */
+        #screen-final-logo { 
+            background-color: #000; 
+            z-index: 100; /* Highest priority to cover everything */
+        }
+
+        .final-logo {
+            max-width: 70%;
+            max-height: 70%;
+            /* 
+               This applies a multi-layered drop-shadow to create a solid WHITE OUTLINE 
+               around the image elements, followed by a soft white glow! 
+            */
+            filter: 
+                drop-shadow(3px 3px 0px #fff) 
+                drop-shadow(-3px -3px 0px #fff) 
+                drop-shadow(3px -3px 0px #fff) 
+                drop-shadow(-3px 3px 0px #fff)
+                drop-shadow(0px 0px 30px rgba(255, 255, 255, 0.8));
+            
+            animation: zoomInLogo 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes zoomInLogo {
+            0% { transform: scale(0.3); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
     </style>
 </head>
@@ -408,8 +433,11 @@
         </div>
     </div>
 
-    <!-- SCREEN 5: BLANK WAIT SCREEN -->
-    <div id="screen-blank" class="screen"></div>
+    <!-- SCREEN 5: FINAL LOGO SCREEN (Displays for 30 sec) -->
+    <div id="screen-final-logo" class="screen">
+        <!-- Replaces the blank screen with the Kem Digital Johor Logo -->
+        <img src="LOGO-Photoroom.jpg" alt="Final Logo" class="final-logo">
+    </div>
 
     <script>
         // --- CONFIGURATION ---
@@ -421,7 +449,7 @@
         const screenScan = document.getElementById('screen-scan');
         const screenSuccess = document.getElementById('screen-success');
         const screenCountdown = document.getElementById('screen-countdown');
-        const screenBlank = document.getElementById('screen-blank');
+        const screenFinalLogo = document.getElementById('screen-final-logo');
         const scanPad = document.getElementById('scan-pad');
         const countdownDisplay = document.getElementById('countdown-display');
         const initiateBtn = document.getElementById('initiate-btn');
@@ -449,7 +477,6 @@
             }
         }
 
-        // Generic function to play short tones
         function playTone(freq, type, duration, vol = 0.1) {
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
@@ -458,7 +485,6 @@
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
             
             gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-            // Quick decay for a punchy digital sound
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
             
             osc.connect(gain);
@@ -473,14 +499,13 @@
         }
 
         function playSuccessSound() {
-            // A major chord arpeggio
-            playTone(440, 'sine', 1, 0.1);   // A4
-            setTimeout(() => playTone(554.37, 'sine', 1, 0.1), 100); // C#5
-            setTimeout(() => playTone(659.25, 'sine', 1.5, 0.1), 200); // E5
+            playTone(440, 'sine', 1, 0.1);   
+            setTimeout(() => playTone(554.37, 'sine', 1, 0.1), 100); 
+            setTimeout(() => playTone(659.25, 'sine', 1.5, 0.1), 200); 
         }
 
         function playCountdownBeep() {
-            playTone(800, 'square', 0.15, 0.05); // High pitch short beep
+            playTone(800, 'square', 0.15, 0.05); 
         }
 
         function playBassDrop() {
@@ -489,11 +514,9 @@
             const gain = audioCtx.createGain();
             osc.type = 'sine';
             
-            // Frequency drops from 150hz down to 20hz
             osc.frequency.setValueAtTime(150, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 2);
             
-            // Volume fades out
             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
             
@@ -509,7 +532,6 @@
             scanGain = audioCtx.createGain();
             scanOsc.type = 'sawtooth';
             
-            // Simulates a sweeping scanner frequency
             scanOsc.frequency.setValueAtTime(100, audioCtx.currentTime);
             scanOsc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 1.5);
             scanOsc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 3.0);
@@ -547,7 +569,6 @@
         }
 
         function startScanning() {
-            // Initialize audio engine on first user click!
             initAudio();
             playStartupSound();
 
@@ -571,7 +592,6 @@
             document.querySelector('.scan-instruction').innerText = "ANALYZING BIOMETRICS...";
             scanPad.classList.add('scanning');
 
-            // Play the hum sound
             startScanSound();
 
             setTimeout(() => {
@@ -601,33 +621,36 @@
 
             let count = 5;
             countdownDisplay.innerText = count;
-            playCountdownBeep(); // Play the very first beep instantly
+            playCountdownBeep(); 
 
             const countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
                     countdownDisplay.innerText = count;
-                    playCountdownBeep(); // Play a beep on every number
+                    playCountdownBeep(); 
                 } else {
                     clearInterval(countdownInterval);
-                    showBlankScreen();
+                    showFinalLogoScreen();
                 }
             }, 1000);
         }
 
-        function showBlankScreen() {
-            playBassDrop(); // Massive shutdown boom
+        function showFinalLogoScreen() {
+            playBassDrop(); 
 
             screenCountdown.classList.remove('active');
-            screenBlank.classList.add('active');
+            
+            // Show the new Final Logo Screen
+            screenFinalLogo.classList.add('active');
 
+            // Wait exactly 30 seconds before resetting back to eyes
             setTimeout(() => {
                 resetToStart();
-            }, 5000);
+            }, 30000); 
         }
 
         function resetToStart() {
-            screenBlank.classList.remove('active');
+            screenFinalLogo.classList.remove('active');
             screenEyes.classList.add('active');
             initiateBtn.style.display = 'none';
         }
