@@ -23,11 +23,10 @@
             -webkit-user-select: none;
         }
 
-        /* --- FULLSCREEN BUTTON --- */
-        #fullscreen-btn {
+        /* --- HIDDEN UTILITY BUTTONS --- */
+        #fullscreen-btn, #refresh-btn {
             position: fixed;
             bottom: 15px;
-            right: 15px;
             background: rgba(0, 255, 0, 0.05);
             border: 1px solid rgba(0, 255, 0, 0.2);
             color: rgba(0, 255, 0, 0.3);
@@ -43,11 +42,14 @@
             transition: all 0.3s ease;
             font-family: inherit;
         }
-        #fullscreen-btn:hover, #fullscreen-btn:active {
+        #fullscreen-btn:hover, #fullscreen-btn:active,
+        #refresh-btn:hover, #refresh-btn:active {
             background: rgba(0, 255, 0, 0.2);
             border-color: #0f0;
             color: #0f0;
         }
+        #fullscreen-btn { right: 15px; }
+        #refresh-btn { left: 15px; }
 
         /* --- 1: THE ROBOT SHELL OVERLAY --- */
         .robot-shell-overlay {
@@ -350,7 +352,6 @@
             z-index: 100; 
         }
 
-        /* The container handles the zoom-in */
         .final-logo-container {
             width: 70%;
             height: 70%;
@@ -358,26 +359,20 @@
             justify-content: center;
             align-items: center;
             animation: zoomInLogo 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            perspective: 1200px; /* Gives the rotation a realistic 3D depth */
+            perspective: 1200px; 
         }
 
-        /* The image itself handles the infinite 3D spin */
         .final-logo {
             max-width: 100%;
             max-height: 100%;
-            
-            /* Erases the black background of the image */
             mix-blend-mode: screen; 
-            
-            /* The white stroke/glow effect */
             filter: 
                 drop-shadow(2px 2px 0px #fff) 
                 drop-shadow(-2px -2px 0px #fff) 
                 drop-shadow(2px -2px 0px #fff) 
                 drop-shadow(-2px 2px 0px #fff)
                 drop-shadow(0px 0px 30px rgba(255, 255, 255, 0.8));
-            
-            /* 3D Spin Animation (6 seconds per full rotation) */
+            /* 3D Spin Animation: 6 seconds per rotation */
             animation: spin3D 6s linear infinite;
         }
 
@@ -395,7 +390,8 @@
 </head>
 <body>
 
-    <!-- FULLSCREEN TOGGLE BUTTON -->
+    <!-- HIDDEN UTILITY BUTTONS -->
+    <button id="refresh-btn" onclick="location.reload()" title="Refresh Page">↻</button>
     <button id="fullscreen-btn" onclick="toggleFullScreen()" title="Toggle Fullscreen">⛶</button>
 
     <!-- OVERLAY 1: THE ROBOT SHELL -->
@@ -418,16 +414,13 @@
         <div class="scan-instruction">AWAITING BIOMETRIC INPUT</div>
         
         <div class="scan-container" id="scan-pad" onclick="triggerScanAnimation()">
-            
             <img src="palms.jpg" alt="Scanning Interface" class="generated-palm-image">
-            
             <div class="hud-overlay">
                 <div class="hud-text top-left">SYS.VER: 9.0.4<br>STATUS: IDLE</div>
                 <div class="hud-text top-right">BIO-METRIC<br>RECEIVER</div>
                 <div class="hud-text bottom-left">LAT: 01.866<br>LON: 103.111</div>
                 <div class="hud-text bottom-right" id="data-stream">ID: [WAITING]<br>UID: [NULL]</div>
             </div>
-
             <div class="scan-grid"></div>
             <div class="scanner-line"></div>
         </div>
@@ -456,9 +449,7 @@
     <!-- SCREEN 5: FINAL 3D ROTATING LOGO SCREEN -->
     <div id="screen-final-logo" class="screen">
         <div class="final-logo-container">
-            <!-- Uses your specific exact file name -->
-            <!-- Note: If it doesn't load, rename your file to 'logo.png' and change this src -->
-            <img src="final_logo.jpg" alt="Final Logo Error" class="final-logo">
+            <img src="ChatGPT Image Sep 8, 2026, 05_39_11 PM.png" alt="Final Logo Error" class="final-logo">
         </div>
     </div>
 
@@ -482,10 +473,6 @@
 
         let scrambleInterval;
 
-        // Apply config
-        document.getElementById('guest-name-display').innerText = guestName;
-        document.getElementById('event-name-display').innerHTML = eventName;
-
         // ==========================================
         //         AUDIO SYNTHESIZER ENGINE
         // ==========================================
@@ -493,6 +480,11 @@
         let audioCtx;
         let scanOsc = null;
         let scanGain = null;
+        
+        // Variables for 3D Logo Sound
+        let logoOscillators = [];
+        let logoGain = null;
+        let logoLfo = null;
 
         function initAudio() {
             if (!audioCtx) {
@@ -574,6 +566,71 @@
                 scanOsc.stop();
                 scanOsc.disconnect();
                 scanGain.disconnect();
+            }
+        }
+
+        // Plays a continuous pulsating hologram sound matching the 3D Logo spin
+        function startLogoSound() {
+            if (!audioCtx) return;
+            
+            logoGain = audioCtx.createGain();
+            logoGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            logoGain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 2); // Fade in over 2s
+            logoGain.connect(audioCtx.destination);
+
+            // A majestic, spacey chord (A minor 9)
+            const freqs = [220.00, 261.63, 329.63, 392.00, 493.88];
+            
+            // LFO matching the exactly 6-second CSS rotation (1/6 = ~0.166 Hz)
+            logoLfo = audioCtx.createOscillator();
+            logoLfo.type = 'sine';
+            logoLfo.frequency.value = 0.1666; 
+            
+            logoOscillators = freqs.map(freq => {
+                let osc = audioCtx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                
+                let vca = audioCtx.createGain();
+                vca.gain.value = 0.5; // Base volume
+                
+                // Connect LFO to VCA gain to make the chord pulse with the rotation
+                let lfoDepth = audioCtx.createGain();
+                lfoDepth.gain.value = 0.4; 
+                logoLfo.connect(lfoDepth);
+                lfoDepth.connect(vca.gain);
+                
+                osc.connect(vca);
+                vca.connect(logoGain);
+                
+                osc.start();
+                return { osc, vca, lfoDepth };
+            });
+            
+            logoLfo.start();
+        }
+
+        function stopLogoSound() {
+            if (logoGain) {
+                // Smooth fade out over 1.5 seconds
+                logoGain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+                setTimeout(() => {
+                    logoOscillators.forEach(nodes => {
+                        nodes.osc.stop();
+                        nodes.osc.disconnect();
+                        nodes.vca.disconnect();
+                        nodes.lfoDepth.disconnect();
+                    });
+                    if (logoLfo) {
+                        logoLfo.stop();
+                        logoLfo.disconnect();
+                    }
+                    if (logoGain) logoGain.disconnect();
+                    
+                    logoOscillators = [];
+                    logoGain = null;
+                    logoLfo = null;
+                }, 1500);
             }
         }
 
@@ -673,6 +730,9 @@
 
         function showFinalLogoScreen() {
             playBassDrop(); 
+            
+            // Start the pulsating 3D hologram synth
+            startLogoSound();
 
             screenCountdown.classList.remove('active');
             screenFinalLogo.classList.add('active');
@@ -684,6 +744,8 @@
         }
 
         function resetToStart() {
+            stopLogoSound(); // Fades out the hologram synth
+
             screenFinalLogo.classList.remove('active');
             screenEyes.classList.add('active');
             initiateBtn.style.display = 'none';
